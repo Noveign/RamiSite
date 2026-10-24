@@ -1,0 +1,72 @@
+name: RamiMode Hub · Publish and refresh
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # Data snapshots, not a realtime stream. Staggered away from :00 to reduce delays.
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out the website
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Restore the newest successful snapshot for Roblox outages. Nothing is committed.
+      - name: Restore recent Roblox data
+        uses: actions/cache/restore@v4
+        with:
+          path: data/games.json
+          key: roblox-snapshot-${{ github.run_id }}
+          restore-keys: |
+            roblox-snapshot-
+
+      - name: Request Roblox metadata and stats
+        run: node scripts/update-games.mjs
+
+      - name: Cache usable Roblox data
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: data/games.json
+          key: roblox-snapshot-${{ github.run_id }}
+
+      - name: Prepare static site
+        run: |
+          mkdir -p _site/data
+          cp index.html app.js styles.css favicon.svg catalog.json _site/
+          cp -r assets _site/assets
+          cp data/games.json _site/data/games.json
+          touch _site/.nojekyll
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
