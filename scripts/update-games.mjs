@@ -80,7 +80,7 @@ export async function generate({
   const errors = [];
   const resolved = await Promise.all(catalog.map(async (game) => {
     let universeId = game.universeId || oldById.get(game.id)?.universeId;
-    if (!universeId) {
+    if (!universeId && game.placeId) {
       try {
         const result = await request(`https://apis.roblox.com/universes/v1/places/${encodeURIComponent(game.placeId)}/universe`, fetchFn);
         universeId = result.universeId || null;

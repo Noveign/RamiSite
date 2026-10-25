@@ -8,7 +8,7 @@
   const genreName = { story: 'STORY-DRIVEN', escape: 'ESCAPE & CHASE', psychological: 'PSYCHOLOGICAL', survival: 'SURVIVAL', anthology: 'ANTHOLOGY', extraction: 'EXTRACTION', supernatural: 'SUPERNATURAL' };
 
   const compactText = n => Number.isFinite(n) ? compact.format(n) : '—';
-  const robloxUrl = game => `https://www.roblox.com/games/${game.placeId}/`;
+  const robloxUrl = game => game.placeId ? `https://www.roblox.com/games/${game.placeId}/` : 'https://www.roblox.com/search/experiences?keyword=' + encodeURIComponent(game.title);
   const localArt = game => new URL(`assets/${game.art}`, document.baseURI).href;
 
   function gameImage(game) {
@@ -87,7 +87,7 @@
     const games = selectedGames();
     const newNodes = games.map(createCard);
     grid.replaceChildren(...newNodes);
-    $('result-label').textContent = `SHOWING ${games.length} OF ${state.games.length} EXPERIENCES`;
+    $('result-label').textContent = `${games.length} / ${state.games.length} GAMES`;
     $('empty-state').hidden = games.length > 0;
   }
 
@@ -105,7 +105,7 @@
     $('live-indicator').classList.toggle('offline', delayed);
     $('live-status').textContent = delayed ? 'LAST SNAPSHOT IS DELAYED' : 'ROBLOX DATA SYNCED';
     const time = formatSyncTime(state.syncedAt);
-    $('update-label').textContent = time ? `LAST ROBLOX SYNC · ${time}` : 'ROBLOX SNAPSHOT · ~15 MIN UPDATES';
+    $('update-label').textContent = time ? `SYNCED · ${time}` : 'UPDATES ~15 MIN';
   }
 
   function applyLivePayload(payload) {
@@ -152,14 +152,14 @@
     const live = state.live.get(game.id);
     setImage($('detail-image'), game);
     $('detail-title').textContent = game.title;
-    $('detail-creator').textContent = live?.creator || game.creator;
+    $('detail-creator').textContent = live?.creator || (game.unverified ? 'Listing unverified' : game.creator);
     $('detail-genre').textContent = genreName[game.theme] || 'HORROR';
     $('detail-summary').textContent = game.summary.join(' ');
     $('detail-visual-caption').textContent = 'MULTIPLAYER / ' + (genreName[game.theme] || 'HORROR');
     const official = $('detail-description');
     official.classList.toggle('waiting', !live || live.description === null);
     if (!live || typeof live.description !== 'string') {
-      official.textContent = 'The official Roblox description is temporarily unavailable. Open the game’s Roblox listing to read the creator’s current description.';
+      official.textContent = game.unverified ? 'Official Roblox listing not verified yet.' : 'Official description unavailable right now. See Roblox for details.';
     } else if (!live.description.trim()) {
       official.textContent = 'The creator has not provided a public description for this experience.';
     } else {
@@ -167,7 +167,9 @@
     }
     const url = robloxUrl(game);
     $('detail-source').href = url;
+    $('detail-source').firstChild.textContent = game.unverified ? 'Search Roblox ' : 'View on Roblox ';
     $('play-link').href = url;
+    $('play-link').firstChild.textContent = game.unverified ? 'Find on Roblox ' : 'Open in Roblox ';
     $('stat-players').textContent = compactText(live?.players);
     $('stat-visits').textContent = compactText(live?.visits);
     $('stat-favorites').textContent = compactText(live?.favorites);
@@ -178,7 +180,7 @@
     $('detail-updated').textContent = live?.verified ? 'ROBLOX SNAPSHOT' : 'UNAVAILABLE';
     $('stats-disclaimer').textContent = live?.verified
       ? `Data from Roblox public APIs, sampled by GitHub Actions approximately every 15 minutes. Last successful sync: ${formatSyncTime(live?.fetchedAt || state.syncedAt) || 'unknown'}. GitHub schedule delays and Roblox outages may extend this interval.`
-      : 'Live statistics are currently unavailable. No values are estimated or invented. You can still open this experience on Roblox.';
+      : game.unverified ? 'Roblox listing not verified. No statistics shown.' : 'Roblox statistics unavailable. No values estimated.';
   }
 
   function openDetails(game) {
@@ -244,6 +246,8 @@
       const catalog = await response.json();
       if (!Array.isArray(catalog)) throw new Error('Invalid catalog');
       state.games = catalog;
+      const n = document.querySelector('.hero-aside-number');
+      if (n) n.innerHTML = `${catalog.length}<span class="tiny-plus">+</span>`;
       render();
       const hash = decodeURIComponent(location.hash.slice(1));
       const direct = state.games.find(g => g.id === hash);
