@@ -415,5 +415,135 @@
       "Staying alert and moving carefully can help you avoid danger.",
       "Bring friends and see whether you can make it out."
     ]
+  },
+  {
+    "id": "bedside-manner",
+    "title": "Bedside Manner [HORROR]",
+    "creator": "Tween2Worlds",
+    "placeId": "84834548474198",
+    "universeId": "10768132333",
+    "art": "bedside-manner.webp",
+    "theme": "escape",
+    "featured": true,
+    "summary": [
+      "You wake in a deserted hospital where something feels terribly wrong.",
+      "Work together to explore rooms and piece together an escape route.",
+      "Unsettling sounds and a relentless atmosphere make each corridor tense.",
+      "Stay alert while you and your friends find a way out."
+    ]
+  },
+  {
+    "id": "apeirophobia",
+    "title": "Apeirophobia",
+    "creator": "Polaroid Studios",
+    "placeId": "10277607801",
+    "universeId": "3761186887",
+    "art": "apeirophobia.webp",
+    "theme": "psychological",
+    "featured": true,
+    "summary": [
+      "Apeirophobia drops you into an endless maze of uncanny spaces.",
+      "Explore unfamiliar rooms and look closely for clues.",
+      "Puzzles and lurking dangers turn simple navigation into a challenge.",
+      "Bring friends and try to find an exit together."
+    ]
+  },
+  {
+    "id": "mulberry-county",
+    "title": "Mulberry County",
+    "creator": "Jackool Studios",
+    "placeId": "104767169570582",
+    "universeId": "9297902951",
+    "art": "mulberry-county.webp",
+    "theme": "story",
+    "featured": false,
+    "summary": [
+      "In rural Mulberry County, unsettling events begin to disturb everyday life.",
+      "The quiet setting hides an atmosphere of growing uncertainty.",
+      "Explore carefully while keeping the curfew in mind.",
+      "Try to stay safe as the mystery unfolds around your group."
+    ]
+  },
+  {
+    "id": "forgotten-memories",
+    "title": "[PART 2] Forgotten Memories",
+    "creator": "Qubix Games",
+    "placeId": "8482713490",
+    "universeId": "3240343305",
+    "art": "forgotten-memories.webp",
+    "theme": "survival",
+    "featured": true,
+    "summary": [
+      "You and your friends take a security job at an abandoned pizzeria.",
+      "A seemingly ordinary shift soon becomes an intense survival challenge.",
+      "Watch your surroundings and cooperate to manage the danger.",
+      "Discover the place at your own pace without knowing its secrets in advance."
+    ]
+  },
+  {
+    "id": "fnaf-coop",
+    "title": "FNAF: Co-op",
+    "creator": "Z0KTAR's Community Group",
+    "placeId": "12495498157",
+    "universeId": "4391829435",
+    "art": "fnaf-coop.webp",
+    "theme": "survival",
+    "featured": true,
+    "summary": [
+      "FNAF: Co-op brings the haunted-pizzeria challenge to a team setting.",
+      "Survive the nights while watching for dangerous animatronics.",
+      "Coordinating with friends helps when the pressure rises.",
+      "See how long your group can last until morning."
+    ]
+  },
+  {
+    "id": "nosey-animatronic",
+    "title": "Nosey Animatronic (Solo Project)",
+    "creator": "@AdrolGaming",
+    "placeId": "89059453310119",
+    "universeId": null,
+    "art": "nosey-animatronic.webp",
+    "theme": "survival",
+    "featured": false,
+    "solo": true,
+    "summary": [
+      "Nosey Animatronic is a solo horror experience about exploring a dangerous location.",
+      "Search the environment for objects while remaining aware of your surroundings.",
+      "The game combines suspense, exploration, and unsettling animatronic imagery.",
+      "See what you can uncover without spoiling its discoveries."
+    ]
+  },
+  {
+    "id": "analog",
+    "title": "ANALOG 📁[HORROR]",
+    "creator": "Kioverse Games",
+    "placeId": "105916934349181",
+    "universeId": null,
+    "art": "analog.webp",
+    "theme": "psychological",
+    "featured": true,
+    "summary": [
+      "ANALOG sends you into eerie sites to document things that seem impossible.",
+      "Pay attention to your equipment and the environment as you investigate.",
+      "Disturbing visuals and a threatening atmosphere build tension.",
+      "Try to complete the assignment while remaining alert to nearby dangers."
+    ]
+  },
+  {
+    "id": "silenth",
+    "title": "[🎃] SILENTH [HORROR]",
+    "creator": "MDJ Games",
+    "placeId": null,
+    "universeId": null,
+    "art": "silenth.webp",
+    "theme": "survival",
+    "featured": false,
+    "unverified": true,
+    "summary": [
+      "SILENTH is a Roblox horror experience with a sinister figure at its center.",
+      "Its imagery suggests a dark setting and an emphasis on unsettling encounters.",
+      "The screenshot also suggests that microphone sounds matter in gameplay.",
+      "Explore with caution and discover what the game offers without story spoilers."
+    ]
   }
 ]
