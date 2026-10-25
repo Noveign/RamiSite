@@ -5,34 +5,41 @@
   const state = { games: [], live: new Map(), search: '', category: 'all', sort: 'featured', syncedAt: null, selectedId: null, lastFocus: null, syncing: false };
   const pretty = new Intl.NumberFormat('en-US');
   const compact = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 });
-  const genreName = { story: 'STORY-DRIVEN', escape: 'ESCAPE & CHASE', psychological: 'PSYCHOLOGICAL', survival: 'SURVIVAL', anthology: 'ANTHOLOGY', extraction: 'EXTRACTION', supernatural: 'SUPERNATURAL' };
+  const genreName = { story: 'STORY-DRIVEN HORROR', escape: 'ESCAPE & CHASE', psychological: 'PSYCHOLOGICAL HORROR', survival: 'SURVIVAL HORROR', anthology: 'HORROR ANTHOLOGY', extraction: 'EXTRACTION HORROR', supernatural: 'SUPERNATURAL HORROR' };
+  const groupName = { horror: 'HORROR', shooter: 'SHOOTERS', movement: 'MOVEMENT', action: 'ACTION & CO-OP', party: 'PARTY & SOCIAL', adventure: 'ADVENTURE', simulation: 'SIMULATION' };
+  const categoryFor = game => game.group || 'horror';
+  const labelFor = game => game.demo ? 'DEMO' : (game.solo ? 'SOLO' : 'MULTIPLAYER');
+  const categoryTextFor = game => categoryFor(game) === 'horror' ? (genreName[game.theme] || 'HORROR') : (groupName[categoryFor(game)] || 'GAMES');
 
   const compactText = n => Number.isFinite(n) ? compact.format(n) : '—';
   const robloxUrl = game => game.placeId ? `https://www.roblox.com/games/${game.placeId}/` : `https://www.roblox.com/discover/?keyword=${encodeURIComponent(game.title.replace(/\[[^\]]+\]/g, '').trim())}`;
-  const localArt = game => new URL(`assets/${game.art}`, document.baseURI).href;
+  const localArt = game => game.art ? new URL(`assets/${game.art}`, document.baseURI).href : null;
 
   function gameImage(game) {
     const item = state.live.get(game.id);
-    return item?.image || localArt(game);
+    return item?.image || game.posterUrl || localArt(game);
   }
   function setImage(img, game) {
     img.alt = `${game.title} promotional image`;
     img.loading = 'lazy';
     img.decoding = 'async';
+    const candidates = [state.live.get(game.id)?.image, game.posterUrl, localArt(game)]
+      .filter((url, index, urls) => url && urls.indexOf(url) === index);
+    let index = 0;
     img.onerror = () => {
-      if (img.src !== new URL(localArt(game), location.href).href) {
-        img.onerror = null;
-        img.src = localArt(game);
-      }
+      index++;
+      if (index < candidates.length) img.src = candidates[index];
+      else { img.onerror = null; img.hidden = true; }
     };
-    img.src = gameImage(game);
+    if (candidates.length) { img.hidden = false; img.src = candidates[0]; }
+    else { img.hidden = true; img.removeAttribute('src'); }
   }
 
   function selectedGames() {
     const q = state.search.trim().toLowerCase();
     const games = state.games.filter(game => {
-      const matchesCategory = state.category === 'all' || game.theme === state.category;
-      const matchesSearch = !q || [game.title, game.creator, game.theme, ...game.summary].join(' ').toLowerCase().includes(q);
+      const matchesCategory = state.category === 'all' || categoryFor(game) === state.category || (categoryFor(game) === 'horror' && game.theme === state.category);
+      const matchesSearch = !q || [game.title, game.creator, game.theme, categoryFor(game), ...(game.tags || []), ...game.summary].filter(Boolean).join(' ').toLowerCase().includes(q);
       return matchesCategory && matchesSearch;
     });
     games.sort((a, b) => {
@@ -73,7 +80,7 @@
     const left = document.createElement('div');
     left.className = 'card-meta-left';
     const dot = document.createElement('span'); dot.className = 'multi-dot';
-    const multi = document.createElement('span'); multi.className = 'multi-label'; multi.textContent = game.solo ? 'SOLO' : 'MULTIPLAYER';
+    const multi = document.createElement('span'); multi.className = 'multi-label'; multi.textContent = labelFor(game) + (categoryFor(game) !== 'horror' ? ` · ${groupName[categoryFor(game)]}` : '');
     left.append(dot, multi);
     const creator = document.createElement('span'); creator.className = 'card-creator';
     creator.textContent = `by ${game.creator}`;
@@ -113,6 +120,10 @@
     const valid = payload.games.some(g => g && g.verified);
     if (!valid) return false;
     for (const record of payload.games) if (record?.id) {
+      const catalogGame = state.games.find(game => game.id === record.id);
+      // A game that was switched to a different Roblox experience must never show
+      // the previous experience's description, thumbnail, or statistics.
+      if (catalogGame?.universeId && String(record.universeId) !== String(catalogGame.universeId)) continue;
       const previous = state.live.get(record.id);
       state.live.set(record.id, record.verified ? record : (previous || record));
     }
@@ -153,11 +164,11 @@
     setImage($('detail-image'), game);
     $('detail-title').textContent = game.title;
     $('detail-creator').textContent = live?.creator || game.creator;
-    $('detail-genre').textContent = genreName[game.theme] || 'HORROR';
+    $('detail-genre').textContent = categoryTextFor(game);
     $('detail-summary').textContent = game.summary.join(' ');
-    $('detail-visual-caption').textContent = (game.solo ? 'SOLO' : 'MULTIPLAYER') + ' / ' + (genreName[game.theme] || 'HORROR');
+    $('detail-visual-caption').textContent = labelFor(game) + ' / ' + categoryTextFor(game);
     const kicker = document.querySelector('.detail-kicker');
-    if (kicker) for (const node of kicker.childNodes) if (node.nodeType === 3 && /MULTIPLAYER|SOLO/.test(node.textContent)) node.textContent = game.solo ? ' SOLO ' : ' MULTIPLAYER ';
+    if (kicker) for (const node of kicker.childNodes) if (node.nodeType === 3 && /MULTIPLAYER|SOLO|DEMO/.test(node.textContent)) node.textContent = ` ${labelFor(game)} `;
     const official = $('detail-description');
     official.classList.toggle('waiting', !live || live.description === null);
     if (!live || typeof live.description !== 'string') {

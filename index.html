@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b0d0f">
-  <meta name="description" content="RamiMode Hub — a curated library of multiplayer Roblox horror games, spoiler-free previews, official descriptions, and live Roblox stats.">
-  <meta property="og:title" content="RamiMode Hub — Multiplayer horror, curated.">
-  <meta property="og:description" content="Find something terrifying to play together. Real Roblox descriptions, recent stats, no spoilers.">
+  <meta name="description" content="RamiMode Hub — a curated library of multiplayer Roblox games across horror, shooters, parkour, party games, and more.">
+  <meta property="og:title" content="RamiMode Hub — Great Roblox games, curated.">
+  <meta property="og:description" content="Find your next Roblox game. Original spoiler-free previews, official descriptions, and regularly updated stats.">
   <meta property="og:type" content="website">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
-  <title>RamiMode Hub — Multiplayer Horror Directory</title>
+  <title>RamiMode Hub — Curated Roblox Games</title>
 </head>
 <body>
   <svg aria-hidden="true" class="icon-definitions" xmlns="http://www.w3.org/2000/svg">
@@ -43,10 +43,10 @@
     <main>
       <section class="hero container" aria-labelledby="hero-title">
         <div class="hero-shine" aria-hidden="true"></div>
-        <div class="hero-topline"><span class="eyebrow-strike"></span><span>THE MULTIPLAYER HORROR INDEX</span><span class="hero-edition">EST. 2026 / VOL. 01</span></div>
+        <div class="hero-topline"><span class="eyebrow-strike"></span><span>THE ROBLOX GAME INDEX</span><span class="hero-edition">EST. 2026 / VOL. 01</span></div>
         <div class="hero-main">
           <div class="hero-copy">
-            <h1 id="hero-title">Fear is better<br><em>together.</em></h1>
+            <h1 id="hero-title">Less scrolling.<br><em>More playing.</em></h1>
             
             <div class="hero-actions">
               <a class="primary-button" href="#catalog">Browse the collection <svg class="inline-svg"><use href="#i-arrow"></use></svg></a>
@@ -54,25 +54,25 @@
             </div>
           </div>
           <div class="hero-aside" aria-label="Catalog overview">
-            <div class="hero-aside-number">34<span class="tiny-plus">+</span></div>
-            <p>HORROR EXPERIENCES</p>
+            <div class="hero-aside-number">77<span class="tiny-plus">+</span></div>
+            <p>CURATED GAMES</p>
             <div class="aside-rule"></div>
             <div class="hero-aside-bottom"><span class="status-dot"></span><span>CO-OP + SOLO</span></div>
           </div>
         </div>
-        <div class="hero-footer"><span>CURATED FOR CO-OP NIGHTMARES</span><span>SCROLL TO DISCOVER <span class="down-arrow">↓</span></span></div>
+        <div class="hero-footer"><span>CURATED FOR GAME NIGHTS</span><span>SCROLL TO DISCOVER <span class="down-arrow">↓</span></span></div>
       </section>
 
       <section id="catalog" class="catalog-section container" aria-label="Game catalog">
         <div class="status-hidden" hidden><div class="live-indicator" id="live-indicator"><span class="live-led"></span><span id="live-status">CONNECTING TO ROBLOX</span></div></div>
         <div class="toolbar">
-          <div class="searchbox"><svg class="inline-svg"><use href="#i-search"></use></svg><input id="search" type="search" placeholder="Search experiences or creators..." aria-label="Search games" autocomplete="off"><kbd>/</kbd></div>
+          <div class="searchbox"><svg class="inline-svg"><use href="#i-search"></use></svg><input id="search" type="search" placeholder="Search games or creators..." aria-label="Search games" autocomplete="off"><kbd>/</kbd></div>
           <div class="toolbar-right">
-            <div class="filter-wrap"><svg class="inline-svg"><use href="#i-filter"></use></svg><select id="category" aria-label="Filter by genre"><option value="all">All categories</option><option value="story">Story-driven</option><option value="escape">Escape & chase</option><option value="psychological">Psychological</option><option value="survival">Survival</option><option value="anthology">Anthology</option><option value="extraction">Extraction</option><option value="supernatural">Supernatural</option></select><svg class="inline-svg drop"><use href="#i-chevron"></use></svg></div>
+            <div class="filter-wrap"><svg class="inline-svg"><use href="#i-filter"></use></svg><select id="category" aria-label="Filter by genre"><option value="all">All games</option><optgroup label="Genres"><option value="horror">Horror</option><option value="shooter">Shooters</option><option value="movement">Movement & parkour</option><option value="action">Action & co-op</option><option value="party">Party & social</option><option value="adventure">Adventure & exploration</option><option value="simulation">Simulation & creative</option></optgroup><optgroup label="Horror styles"><option value="story">Story-driven horror</option><option value="escape">Escape & chase</option><option value="psychological">Psychological horror</option><option value="survival">Survival horror</option><option value="anthology">Anthology</option><option value="extraction">Extraction</option><option value="supernatural">Supernatural</option></optgroup></select><svg class="inline-svg drop"><use href="#i-chevron"></use></svg></div>
             <div class="filter-wrap sort-wrap"><select id="sort" aria-label="Sort games"><option value="featured">Curated order</option><option value="players">Most active</option><option value="rating">Top rated</option><option value="az">A – Z</option></select><svg class="inline-svg drop"><use href="#i-chevron"></use></svg></div>
           </div>
         </div>
-        <div class="result-row"><span id="result-label">SHOWING 34 EXPERIENCES</span><span id="update-label">ROBLOX SNAPSHOT · UPDATES ~15 MIN</span></div>
+        <div class="result-row"><span id="result-label">SHOWING 77 EXPERIENCES</span><span id="update-label">ROBLOX SNAPSHOT · UPDATES ~15 MIN</span></div>
         <div class="game-grid" id="game-grid" aria-live="polite"></div>
         <div class="empty-state" id="empty-state" hidden><span>NO MATCHES FOUND</span><h3>Nothing in the shadows.</h3><p>Try a different name or category.</p><button id="clear-filters" class="primary-button">Clear filters</button></div>
       </section>
@@ -82,12 +82,12 @@
         <div class="how-columns">
           <div class="how-item"><span class="how-number">01 /</span><h3>Look closer</h3><p>Tap the <strong>i</strong> icon on any poster for an original, spoiler-free four-sentence introduction.</p></div>
           <div class="how-item"><span class="how-number">02 /</span><h3>Get the real info</h3><p>Read the official Roblox description and see player counts, visits, favorites, and ratings when available.</p></div>
-          <div class="how-item"><span class="how-number">03 /</span><h3>Play together</h3><p>Most picks support multiplayer; solo games are labeled. Open the official Roblox experience to get started.</p></div>
+          <div class="how-item"><span class="how-number">03 /</span><h3>Pick your game</h3><p>Explore horror, shooters, parkour, and more. Multiplayer and demo labels help you choose.</p></div>
         </div>
       </section>
     </main>
 
-    <footer class="footer container"><div class="footer-top"><span class="footer-brand">RAMIMODE<span>.</span>HUB</span><span>GOOD HORROR. BETTER COMPANY.</span></div><div class="footer-bottom"><span>© <span id="year">2026</span> RAMIMODE HUB</span><span>UNOFFICIAL ROBLOX EXPERIENCE DIRECTORY · NOT AFFILIATED WITH ROBLOX</span><a href="#top">BACK TO TOP ↑</a></div></footer>
+    <footer class="footer container"><div class="footer-top"><span class="footer-brand">RAMIMODE<span>.</span>HUB</span><span>GOOD GAMES. BETTER COMPANY.</span></div><div class="footer-bottom"><span>© <span id="year">2026</span> RAMIMODE HUB</span><span>INDEPENDENT ROBLOX GAME DIRECTORY · NOT AFFILIATED WITH ROBLOX</span><a href="#top">BACK TO TOP ↑</a></div></footer>
   </div>
 
   <div class="detail-overlay" id="detail-overlay" hidden>
@@ -95,7 +95,7 @@
     <aside class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title" tabindex="-1" id="detail-panel">
       <div class="panel-top"><span class="panel-eyebrow">RAMIMODE HUB / EXPERIENCE FILE</span><button type="button" id="detail-close" class="close-button" aria-label="Close game details"><svg class="inline-svg"><use href="#i-cross"></use></svg></button></div>
       <div class="panel-scroll">
-        <div class="detail-visual"><img id="detail-image" alt=""><div class="visual-noise"></div><div class="detail-visual-caption" id="detail-visual-caption">MULTIPLAYER HORROR</div></div>
+        <div class="detail-visual"><img id="detail-image" alt=""><div class="visual-noise"></div><div class="detail-visual-caption" id="detail-visual-caption">MULTIPLAYER</div></div>
         <div class="detail-content">
           <div class="detail-kicker"><span class="detail-dot"></span> MULTIPLAYER <span class="kicker-sep">/</span><span id="detail-genre">HORROR</span></div>
           <h2 id="detail-title">Experience</h2>

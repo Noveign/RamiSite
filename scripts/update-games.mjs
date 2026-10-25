@@ -78,32 +78,50 @@ export async function generate({
   catch (_) { previous = { games: [], syncedAt: null }; }
   const oldById = idMap(previous.games);
   const errors = [];
-  const resolved = await Promise.all(catalog.map(async (game) => {
-    let universeId = game.universeId || oldById.get(game.id)?.universeId;
-    if (!universeId && game.placeId) {
-      try {
-        const result = await request(`https://apis.roblox.com/universes/v1/places/${encodeURIComponent(game.placeId)}/universe`, fetchFn);
-        universeId = result.universeId || null;
-      } catch (error) { errors.push(`place ${game.placeId}: ${error.message}`); }
+  // Resolve place IDs with controlled concurrency to avoid 429s when the catalog grows.
+  // A previously cached universe is only reused when its place ID matches.
+  const resolved = new Array(catalog.length);
+  let cursor = 0;
+  async function resolveWorker() {
+    while (cursor < catalog.length) {
+      const i = cursor++;
+      const game = catalog[i];
+      const previousEntry = oldById.get(game.id);
+      let universeId = game.universeId ||
+        (previousEntry?.placeId && String(previousEntry.placeId) === String(game.placeId)
+          ? previousEntry.universeId : null);
+      if (!universeId && game.placeId) {
+        try {
+          const result = await request(`https://apis.roblox.com/universes/v1/places/${encodeURIComponent(game.placeId)}/universe`, fetchFn);
+          universeId = result.universeId || null;
+        } catch (error) { errors.push(`place ${game.placeId}: ${error.message}`); }
+      }
+      resolved[i] = { ...game, universeId: universeId ? String(universeId) : null };
     }
-    return { ...game, universeId: universeId ? String(universeId) : null };
-  }));
+  }
+  await Promise.all(Array.from({ length: Math.min(5, catalog.length) }, () => resolveWorker()));
 
   const universeIds = [...new Set(resolved.map(g => g.universeId).filter(Boolean))];
-  let details, votes, images, icons;
-  if (universeIds.length) {
-    const ids = universeIds.join(',');
-    const results = await Promise.allSettled([
-      request(API.details + ids, fetchFn),
-      request(API.votes + ids, fetchFn),
-      request(API.thumbnails + ids + '&countPerUniverse=1&defaults=true&size=768x432&format=Png', fetchFn),
-      request(API.icons + ids + '&size=512x512&format=Png&isCircular=false', fetchFn),
-    ]);
-    details = readData(results[0], 'experience details', errors);
-    votes = readData(results[1], 'ratings', errors);
-    images = readData(results[2], 'thumbnails', errors);
-    icons = readData(results[3], 'icons', errors);
+  // Roblox endpoints can reject oversized multi-ID requests. Split into batches.
+  const CHUNK = 20;
+  const chunks = [];
+  for (let i = 0; i < universeIds.length; i += CHUNK) chunks.push(universeIds.slice(i, i + CHUNK));
+  const combined = [[], [], [], []];
+  for (const chunk of chunks) {
+    const ids = chunk.join(',');
+    const requests = [
+      [API.details + ids, 'experience details'],
+      [API.votes + ids, 'ratings'],
+      [API.thumbnails + ids + '&countPerUniverse=1&defaults=true&size=768x432&format=Png', 'thumbnails'],
+      [API.icons + ids + '&size=512x512&format=Png&isCircular=false', 'icons'],
+    ];
+    const results = await Promise.allSettled(requests.map(([url]) => request(url, fetchFn)));
+    results.forEach((result, i) => {
+      const data = readData(result, requests[i][1], errors);
+      if (Array.isArray(data?.data)) combined[i].push(...data.data);
+    });
   }
+  const [details, votes, images, icons] = combined.map(data => ({data}));
 
   const detailById = idMap(details?.data);
   const votesById = idMap(votes?.data);
@@ -112,8 +130,11 @@ export async function generate({
   const now = new Date().toISOString();
   let fresh = 0;
 
-  const games = resolved.map(({ id, universeId }) => {
-    const old = oldById.get(id) || {};
+  const games = resolved.map(({ id, placeId, universeId }) => {
+    const previousEntry = oldById.get(id);
+    // IDs can be reused when the curator replaces a listing (e.g. West Wood
+    // with West Wood: Remake). Never inherit stale details from another universe.
+    const old = previousEntry && String(previousEntry.universeId) === String(universeId) ? previousEntry : {};
     const detail = detailById.get(universeId);
     const tally = votesById.get(universeId);
     const up = asInt(tally?.upVotes);
@@ -126,7 +147,7 @@ export async function generate({
     const choose = (value, oldValue) => value === null || value === undefined ? (oldValue ?? null) : value;
     const newRating = up !== null && down !== null && up + down > 0 ? Math.round(up * 100 / (up + down)) : null;
     return {
-      id, universeId,
+      id, placeId: placeId || null, universeId,
       title: choose(asDescription(detail?.name), old.title),
       description: choose(asDescription(detail?.description), old.description),
       creator: choose(asDescription(detail?.creator?.name), old.creator),
